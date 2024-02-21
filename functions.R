@@ -1,4 +1,5 @@
 ### CLEAN Functions
+library(tidyverse)
 
 # function to get back tags in time order
 make_df  <- function(df){
@@ -29,7 +30,7 @@ drop_els <- function(lst, ind) {
 
 
 ## Temporary way of getting list of transition types
-df11 <- read_csv("mouse11cohort11.csv")
+df11 <- read_csv("data/mouse11cohort11.csv")
 ddf11 <- make_df(df11)
 ddf <- data.frame(table(ddf11$trans)) %>% arrange(-Freq)
 ddf$type <- c(rep("tt",12),rep("eq",3),rep("tr",5),"tb",rep("tr",2),"eq","tr",rep("eq",3),
