@@ -22,3 +22,10 @@ l13 <- lapply(l13, add_type)
 unlist(lapply(l13, function(x) sum(is.na(x$type))))
 
 ## Need to get list of possible transitions for setup B.
+
+## Cohort 12
+l12 <- split(data12, data12$mouse)
+l12 <- lapply(l12, make_df)
+
+x<-data.frame(trans = data.table::rbindlist(l12) %>% .$trans %>% unique())
+write.csv(x, "transitions.csv", row.names=F)
