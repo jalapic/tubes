@@ -1,5 +1,6 @@
 ### CLEAN Functions
 library(tidyverse)
+library(lubridate)
 
 ## read in transition types csv
 ddf <- read_csv("transitions.csv")
@@ -46,6 +47,13 @@ tubetrans <- c("9-1:9-2", "9-2:9-1",
 
 tubetrans
 
+tubetrans2 <- c("19-1:19-2", "19-2:19-1",
+                "16-1:16-2", "16-2:16-1",
+                "21-1:21-2", "21-2:21-1",
+                "20-1:20-2", "20-2:20-1",
+                "17-1:17-2", "17-2:17-1",
+                "18-1:18-2", "18-2:18-1"
+)
 
 
 ## Find Pairs in vectors of times
