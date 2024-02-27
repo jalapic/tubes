@@ -18,8 +18,7 @@ data14$datetime <- as.POSIXct(data14$datetimestamp, format = "%d.%m.%Y %H:%M:%S:
 
 
 ## Cohort 11
-table(data11$mouse) #mouse 9 remove
-data11 <- data11 %>% filter(mouse!=9)
+table(data11$mouse) 
 l11 <- split(data11, data11$mouse)
 l11 <- lapply(l11, make_df)
 l11 <- lapply(l11, add_type)
@@ -265,51 +264,6 @@ grid.arrange(pp1+ggtitle("m7c11"),
 
 
 
-### Make a graph of the median values - looks terrible, no need for it.
-
-rise_time_df <- function(df,mouse,dtime){
-  dtime <- as.POSIXct(dtime, format = "%Y-%m-%d %H:%M:%S")
-  df.f <- df %>% filter(datetime>dtime) %>% filter(datetime<=dtime+hours(24))
-  minms <- df.f %>% ungroup() %>% arrange(datetime) %>%head(1) %>% .$ms 
-  df.f$mstime <- df.f$ms - minms
-  l <- split(df.f, df.f$mouse)
-  l <- lapply(l, make_df)
-  l <- lapply(l, add_type)
-  df.f.all <- data.table::rbindlist(l)
-  df.f.time <- df.f.all %>% filter(type %in% trntypes) %>% group_by(mouse) %>% arrange(mstime) %>% mutate(stepval = row_number())
-  df.f.time$val <- ifelse(df.f.time$mouse==mouse, "riser", "other")
-  df.f.time$hours <- df.f.time$mstime / (1000 * 60 * 60)
-  return(df.f.time)
-}
-
-d1=rise_time_df(df = data11, dtime = "2023-08-11 11:00:00 CDT", mouse = 7)
-d2=rise_time_df(df = data11, dtime = "2023-08-19 11:00:00 CDT", mouse = 4)
-d3=rise_time_df(df = data13, dtime = "2023-09-08 11:00:00 CDT", mouse = 2)
-d4=rise_time_df(df = data13, dtime = "2023-09-16 11:00:00 CDT", mouse = 8)
-d5=rise_time_df(df = data12, dtime = "2023-08-07 11:00:00 CDT", mouse = 11)
-d6=rise_time_df(df = data12, dtime = "2023-08-15 11:00:00 CDT", mouse = 7)
-d7=rise_time_df(df = data12, dtime = "2023-08-23 11:00:00 CDT", mouse = 10)
-d8=rise_time_df(df = data14, dtime = "2023-09-04 11:00:00 CDT", mouse = 5)
-d9=rise_time_df(df = data14, dtime = "2023-09-12 11:00:00 CDT", mouse = 8)
-d10=rise_time_df(df = data14, dtime = "2023-09-20 11:00:00 CDT", mouse = 7)
-
-actdf1 <- rbind(d1,d2,d3,d4,d5,d6,d7,d8,d9,d10) %>%
-  select(mouse,cohort,val,hours,type,mstime,stepval) %>%
-  mutate(mouseid=paste(mouse,cohort,sep="-")) 
-
-actdf1.sum <- actdf1 %>%
-  group_by(val,stepval) %>%
-  summarize(med = median(mstime),
-            lq = quantile(mstime,.25),
-            uq = quantile(mstime,.75)
-            )
-
-ggplot(actdf1.sum, aes(x = stepval, y = med, color=val, fill=val)) +
-  geom_line() + 
-  geom_ribbon(aes(ymin = lq, ymax = uq), alpha = 0.3) + 
-  coord_flip()
-
-
 
 
 ### Compared to Sham removals;
@@ -498,14 +452,26 @@ dd10<-ggplot(all, aes(x=hours, y=value, group=factor(vector2), color=condition))
 
 grid.arrange(dd1+ggtitle("m7c11"),
              dd2+ggtitle("m4c11"),
-             dd3+ggtitle("m2c12"),
-             dd4+ggtitle("m8c12"),
-             dd5+ggtitle("m11c13"),
-             dd6+ggtitle("m7c13"),
-             dd7+ggtitle("m10c13"),
+             dd3+ggtitle("m2c13"),
+             dd4+ggtitle("m8c13"),
+             dd5+ggtitle("m11c12"),
+             dd6+ggtitle("m7c12"),
+             dd7+ggtitle("m10c12"),
              dd8+ggtitle("m5c14"),
              dd9+ggtitle("m8c14"),
              dd10+ggtitle("m7c14"),
              nrow=2)
 
 
+### Looking at cohort 12, last 3 animals.
+range(data12$datetime)
+data12x <- data12 %>% filter(datetime>= "2023-08-23 11:00:00 CDT")
+l12xall <- split(data12x, data12x$mouse)
+l12xall <- lapply(l12xall, make_df)
+l12xall <- lapply(l12xall, add_type)
+df12xall <- map_dfr(tubetrans2, ~ get_pairs_df(l12xall, tt = .x, win = 500), .id = "tubetrans")
+df12xall$tubetrans <- tubetrans2[as.numeric(df12xall$tubetrans)]
+alldfx12all <- df12xall %>% arrange(value1) %>% mutate(dif = value1 - lag(value1))
+alldfx12all
+compete::org_matrix(compete::get_wl_matrix(alldfx12all[c(5,4)]),method='ds')
+compete::ds(compete::get_wl_matrix(alldfx12all[c(5,4)]))

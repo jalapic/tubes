@@ -75,7 +75,12 @@ alldf14all
 ## Save Data
 tubefollows <- c(alldf11all, alldf12all, alldf13all, alldf14all)
 saveRDS(tubefollows, "data/tubefollows.RData")
+tubefollows <- readRDS("data/tubefollows.RData")
 
+alldf11all<-data.frame(tubefollows[1:6])
+alldf12all<-data.frame(tubefollows[7:12])
+alldf13all<-data.frame(tubefollows[13:18])
+alldf14all<-data.frame(tubefollows[19:24])
 
 ### Hierarchy Metrics
 
@@ -98,7 +103,7 @@ dfmat <- as.data.frame(mat1)
 dfmat$loser <- factor(dfmat$loser, levels = rownames(mat))
 dfmat$winner <- factor(dfmat$winner, levels = rev(rownames(mat)))
 
-matdi <- compete::get_di_matrix(compete::org_matrix(compete::get_wl_matrix(chdf1all), method = "ds"))
+matdi <- compete::get_di_matrix(compete::org_matrix(compete::get_wl_matrix(chdf11all), method = "ds"))
 matdi <- matdi[levs,levs]
 dfmatdi <- reshape2::melt(matdi)
 dfmat <- cbind(dfmat, val=dfmatdi[,3])
@@ -110,7 +115,7 @@ dfmat$tot <- ifelse(dfmat$val==0, NA, dfmat$tot)
 # Plot heatmap using ggplot2
 formatted_x <- ifelse(is.na(dfmat$Freq), NA, sprintf("%.2f", dfmat$Freq))
 
-ggplot(dfmat, aes(x = loser, y = winner, fill = Freq)) +
+p1<-ggplot(dfmat, aes(x = loser, y = winner, fill = Freq)) +
   geom_tile(color='black') +
   geom_text(label=formatted_x, color = "black", size = 3, na.rm = TRUE) +
   scale_fill_gradient(low = "white", high = "red", na.value = "white") +
@@ -118,3 +123,141 @@ ggplot(dfmat, aes(x = loser, y = winner, fill = Freq)) +
   theme_classic() + 
   theme(axis.line = element_blank()) +
   scale_x_discrete(position = "top") 
+
+
+
+### Cohort 12
+chdf12all <- data.frame(winner=alldf12all[,5],loser = alldf12all[,4])
+compete::org_matrix(compete::get_wl_matrix(chdf12all), method = "ds")
+compete::get_di_matrix(compete::org_matrix(compete::get_wl_matrix(chdf12all), method = "ds"))
+compete::devries(compete::get_wl_matrix(chdf12all))
+compete::ds(compete::get_wl_matrix(chdf12all))
+compete::isi13(compete::get_wl_matrix(chdf12all))
+
+isi <- compete::isi13(compete::get_wl_matrix(chdf12all))
+mat <- compete::org_matrix(compete::get_wl_matrix(chdf12all), method = 'ds')
+levs <- isi$best_order
+mat <- mat[levs,levs]
+sum(mat)
+matdf <- as.data.frame(mat)
+mat1 <- mat/(mat + t(mat))
+dfmat <- as.data.frame(mat1)
+dfmat$loser <- factor(dfmat$loser, levels = rownames(mat))
+dfmat$winner <- factor(dfmat$winner, levels = rev(rownames(mat)))
+
+matdi <- compete::get_di_matrix(compete::org_matrix(compete::get_wl_matrix(chdf12all), method = "ds"))
+matdi <- matdi[levs,levs]
+dfmatdi <- reshape2::melt(matdi)
+dfmat <- cbind(dfmat, val=dfmatdi[,3])
+dfmat <- cbind(dfmat, tot = matdf[,3])
+dfmat
+dfmat$Freq <- ifelse(dfmat$val==0, NA, dfmat$Freq)
+dfmat$tot <- ifelse(dfmat$val==0, NA, dfmat$tot)
+
+# Plot heatmap using ggplot2
+formatted_x <- ifelse(is.na(dfmat$Freq), NA, sprintf("%.2f", dfmat$Freq))
+
+p2<-ggplot(dfmat, aes(x = loser, y = winner, fill = Freq)) +
+  geom_tile(color='black') +
+  geom_text(label=formatted_x, color = "black", size = 3, na.rm = TRUE) +
+  scale_fill_gradient(low = "white", high = "red", na.value = "white") +
+  coord_equal() +
+  theme_classic() + 
+  theme(axis.line = element_blank()) +
+  scale_x_discrete(position = "top") 
+
+
+
+
+
+### Cohort 13
+chdf13all <- data.frame(winner=alldf13all[,5],loser = alldf13all[,4])
+compete::org_matrix(compete::get_wl_matrix(chdf13all), method = "ds")
+compete::get_di_matrix(compete::org_matrix(compete::get_wl_matrix(chdf13all), method = "ds"))
+compete::devries(compete::get_wl_matrix(chdf13all))
+compete::ds(compete::get_wl_matrix(chdf13all))
+compete::isi13(compete::get_wl_matrix(chdf13all))
+
+isi <- compete::isi13(compete::get_wl_matrix(chdf13all))
+mat <- compete::org_matrix(compete::get_wl_matrix(chdf13all), method = 'ds')
+levs <- isi$best_order
+mat <- mat[levs,levs]
+sum(mat)
+matdf <- as.data.frame(mat)
+mat1 <- mat/(mat + t(mat))
+dfmat <- as.data.frame(mat1)
+dfmat$loser <- factor(dfmat$loser, levels = rownames(mat))
+dfmat$winner <- factor(dfmat$winner, levels = rev(rownames(mat)))
+
+matdi <- compete::get_di_matrix(compete::org_matrix(compete::get_wl_matrix(chdf13all), method = "ds"))
+matdi <- matdi[levs,levs]
+dfmatdi <- reshape2::melt(matdi)
+dfmat <- cbind(dfmat, val=dfmatdi[,3])
+dfmat <- cbind(dfmat, tot = matdf[,3])
+dfmat
+dfmat$Freq <- ifelse(dfmat$val==0, NA, dfmat$Freq)
+dfmat$tot <- ifelse(dfmat$val==0, NA, dfmat$tot)
+
+# Plot heatmap using ggplot2
+formatted_x <- ifelse(is.na(dfmat$Freq), NA, sprintf("%.2f", dfmat$Freq))
+
+p3<-ggplot(dfmat, aes(x = loser, y = winner, fill = Freq)) +
+  geom_tile(color='black') +
+  geom_text(label=formatted_x, color = "black", size = 3, na.rm = TRUE) +
+  scale_fill_gradient(low = "white", high = "red", na.value = "white") +
+  coord_equal() +
+  theme_classic() + 
+  theme(axis.line = element_blank()) +
+  scale_x_discrete(position = "top") 
+
+
+
+
+
+
+### Cohort 14
+chdf14all <- data.frame(winner=alldf14all[,5],loser = alldf14all[,4])
+compete::org_matrix(compete::get_wl_matrix(chdf14all), method = "ds")
+compete::get_di_matrix(compete::org_matrix(compete::get_wl_matrix(chdf14all), method = "ds"))
+compete::devries(compete::get_wl_matrix(chdf14all))
+compete::ds(compete::get_wl_matrix(chdf14all))
+compete::isi13(compete::get_wl_matrix(chdf14all))
+
+isi <- compete::isi13(compete::get_wl_matrix(chdf14all))
+mat <- compete::org_matrix(compete::get_wl_matrix(chdf14all), method = 'ds')
+levs <- isi$best_order
+mat <- mat[levs,levs]
+sum(mat)
+matdf <- as.data.frame(mat)
+mat1 <- mat/(mat + t(mat))
+dfmat <- as.data.frame(mat1)
+dfmat$loser <- factor(dfmat$loser, levels = rownames(mat))
+dfmat$winner <- factor(dfmat$winner, levels = rev(rownames(mat)))
+
+matdi <- compete::get_di_matrix(compete::org_matrix(compete::get_wl_matrix(chdf14all), method = "ds"))
+matdi <- matdi[levs,levs]
+dfmatdi <- reshape2::melt(matdi)
+dfmat <- cbind(dfmat, val=dfmatdi[,3])
+dfmat <- cbind(dfmat, tot = matdf[,3])
+dfmat
+dfmat$Freq <- ifelse(dfmat$val==0, NA, dfmat$Freq)
+dfmat$tot <- ifelse(dfmat$val==0, NA, dfmat$tot)
+
+# Plot heatmap using ggplot2
+formatted_x <- ifelse(is.na(dfmat$Freq), NA, sprintf("%.2f", dfmat$Freq))
+
+p4<-ggplot(dfmat, aes(x = loser, y = winner, fill = Freq)) +
+  geom_tile(color='black') +
+  geom_text(label=formatted_x, color = "black", size = 3, na.rm = TRUE) +
+  scale_fill_gradient(low = "white", high = "red", na.value = "white") +
+  coord_equal() +
+  theme_classic() + 
+  theme(axis.line = element_blank()) +
+  scale_x_discrete(position = "top") 
+
+library(gridExtra)
+grid.arrange(p1 +ggtitle("Cohort 11"),
+             p2 +ggtitle("Cohort 12"),
+             p3 +ggtitle("Cohort 13"),
+             p4 +ggtitle("Cohort 14"),
+             nrow=1)
